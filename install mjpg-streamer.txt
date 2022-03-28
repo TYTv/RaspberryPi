@@ -1,0 +1,64 @@
+sudo raspi-config
+#enable camera
+
+----------------------------------------------------------------------------
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install rpi-update
+sudo apt-get rpi-update
+sudo reboot
+
+----------------------------------------------------------------------------
+sudo apt-get install subversion
+
+echo "deb http://raspbian.raspberrypi.org/raspbian/ buster main contrib non-free rpi
+# Uncomment line below then 'apt-get update' to enable 'apt-get source'
+#deb-src http://raspbian.raspberrypi.org/raspbian/ buster main contrib non-free rpi" | sudo tee -a /etc/apt/sources.list
+
+echo "deb http://archive.raspberrypi.org/debian/ buster main ui
+# Uncomment line below then 'apt-get update' to enable 'apt-get source'
+#deb-src http://archive.raspberrypi.org/debian/ buster main ui" | sudo tee -a /etc/apt/sources.list.d/raspi.list
+
+wget https://archive.raspbian.org/raspbian.public.key -O - | sudo apt-key add -
+wget https://archive.raspberrypi.org/debian/raspberrypi.gpg.key -O - | sudo apt-key add -
+
+sudo apt-get update
+
+sudo apt-get install libjpeg8-dev
+
+sudo apt-get install imagemagick
+sudo apt-get install libv4l-dev
+sudo apt-get install cmake
+sudo apt-get install git
+
+sudo git clone https://github.com/jacksonliam/mjpg-streamer.git
+cd mjpg-streamer/mjpg-streamer-experimental
+sudo make all
+sudo make install
+
+sudo wget http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc && sudo apt-key add ./lrkey.asc
+
+curl https://www.linux-projects.org/listing/uv4l_repo/lpkey.asc | sudo apt-key add -
+echo "deb https://www.linux-projects.org/listing/uv4l_repo/raspbian/stretch stretch main" | sudo tee -a /etc/apt/sources.list.d/uv4l.list
+sudo apt-get update
+
+sudo apt-get install uv4l uv4l-raspicam
+sudo reboot
+
+----------------------------------------------------------------------------
+sudo pkill uv4l
+sudo apt-get update
+sudo apt-get install uv4l-uvc
+sudo apt-get install uv4l-xscreen
+sudo apt-get install uv4l-mjpegstream
+sudo reboot
+
+----------------------------------------------------------------------------
+sudo modprobe bcm2835-v4l2
+cd /home/pi/mjpg-streamer/mjpg-streamer-experimental/
+./mjpg_streamer -i "./input_uvc.so -d /dev/video0 -n -y -f 30 -r 1920x1080"-o "./output_http.so -n -w /usr/local/www"
+
+----------------------------------------------------------------------------
+http://raspberrypi:8080/?action=stream
+
+
