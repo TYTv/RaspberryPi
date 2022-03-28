@@ -54,9 +54,19 @@ sudo apt-get install uv4l-mjpegstream
 sudo reboot
 
 ----------------------------------------------------------------------------
+sudo nano mjpg_streamer.sh
+
+#!/bin/bash
 sudo modprobe bcm2835-v4l2
 cd /home/pi/mjpg-streamer/mjpg-streamer-experimental/
 ./mjpg_streamer -i "./input_uvc.so -d /dev/video0 -n -y -f 30 -r 1920x1080"-o "./output_http.so -n -w /usr/local/www"
+
+sudo chmod 777 mjpg_streamer.sh
+
+----------------------------------------------------------------------------
+sudo nano /etc/rc.local
+/home/pi/mjpg-streamer/mjpg-streamer-experimental/mjpg_streamer.sh
+sudo reboot
 
 ----------------------------------------------------------------------------
 http://raspberrypi:8080/?action=stream
